@@ -16,9 +16,7 @@
               v-model="email"
               label="email"
               lazy-rules
-              :rules="[
-                (val) => (val && val.length > 0) || 'Please type something',
-              ]"
+              :rules="[(val) => !!val || 'Введите email', isValidEmail]"
             />
 
             <q-input
@@ -27,6 +25,7 @@
               v-model="password"
               label="password"
               lazy-rules
+              :rules="loginRules"
             />
 
             <div>
@@ -55,10 +54,6 @@ import { useQuasar } from 'quasar';
 export default {
   data() {
     return {
-      jwt: localStorage.getItem('jwt'),
-      show1: false,
-      show2: true,
-      regCheck: false,
       username: '',
       email: '',
       password: '',
@@ -76,21 +71,26 @@ export default {
         email: this.email,
         password: this.password,
       }).then((res) => {
-        console.log(res.data);
-        console.log(this.$q);
-        // $q.cookies.set('JWT', '');
-        this.$q.cookies.set('JWT', res.data.access_token, { expires: '60s' });
-        this.$router.push('/profile');
-        // localStorage.setItem('jwt', res.data.jwt);
-        // localStorage.setItem('username', res.data.name);
-        // localStorage.setItem('id', res.data.id);
-        // window.dispatchEvent(new CustomEvent('login'));
+        console.log(res);
+        console.log('logged');
+        this.$q.cookies.set('JWT', res.data.access_token, {
+          expires: res.data.expiresIn,
+        });
+        this.$q.cookies.set('id', res.data.id);
+        console.log(this.$q.cookies.getAll());
+        this.$router.replace('/profile');
       });
+    },
+    isValidEmail() {
+      const emailPattern =
+        /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
+      return emailPattern.test(this.email) || 'Неправильный email';
     },
   },
   setup() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
     const $q = useQuasar();
+    console.log($q.cookies.getAll());
   },
 };
 </script>

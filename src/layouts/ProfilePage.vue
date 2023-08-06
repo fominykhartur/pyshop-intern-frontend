@@ -61,63 +61,52 @@ export default {
   data() {
     return {
       isAuth: false,
-      jwt: localStorage.getItem('jwt'),
+      id: 0,
       name: '',
       info: '',
       telNumber: '',
       address: '',
-      show1: false,
-      show2: true,
-      regCheck: false,
-      username: '',
-      email: '',
-      password: '',
-      loginRules: [
-        (value: string) => {
-          if (value?.length > 0) return true;
-          return 'Поле не должно быть пустым';
-        },
-      ],
     };
   },
   methods: {
     onSubmit: function () {
       postRequest(`${import.meta.env.VITE_HOST}/user/updateInfo`, {
-        id: 4,
+        id: this.id,
         name: this.name,
         info: this.info,
         telNumber: this.telNumber,
         address: this.address,
       }).then((res) => {
         console.log(res);
-        // localStorage.setItem('jwt', res.data.jwt);
-        // localStorage.setItem('username', res.data.name);
-        // localStorage.setItem('id', res.data.id);
-        // window.dispatchEvent(new CustomEvent('login'));
       });
     },
 
     logOut: function () {
       console.log('вышел');
       this.$q.cookies.remove('JWT');
+      this.$q.cookies.remove('id');
       this.$router.push('/login');
     },
   },
-  beforeCreate() {
-    getRequest(`${import.meta.env.VITE_HOST}/user/4`).then((res) => {
+  beforeMount() {
+    this.id = parseInt(this.$q.cookies.get('id'));
+    getRequest(`${import.meta.env.VITE_HOST}/user/${this.id}`).then((res) => {
       console.log(res);
       this.name = res.data.name;
       this.info = res.data.info;
       this.telNumber = res.data.telNumber;
       this.address = res.data.address;
+      if (this.$q.cookies.has('JWT')) {
+        console.log('cookied');
+        this.isAuth = true;
+      }
     });
   },
+  // beforeMount() {
+  // },
   mounted() {
-    if (this.$q.cookies.get('JWT')) {
-      console.log('cookied');
-      this.isAuth = true;
-    }
     console.log(this.isAuth);
+    console.log(this.id);
   },
   setup() {
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

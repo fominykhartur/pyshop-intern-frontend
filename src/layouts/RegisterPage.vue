@@ -16,9 +16,7 @@
               v-model="email"
               label="email"
               lazy-rules
-              :rules="[
-                (val) => (val && val.length > 0) || 'Please type something',
-              ]"
+              :rules="[(val) => !!val || 'Введите email', isValidEmail]"
             />
 
             <q-input
@@ -27,6 +25,7 @@
               v-model="password"
               label="password"
               lazy-rules
+              :rules="[(val) => !!val || 'Введите пароль', isValidPassword]"
             />
 
             <div>
@@ -54,19 +53,9 @@ import { postRequest } from '../plugins/api';
 export default {
   data() {
     return {
-      jwt: localStorage.getItem('jwt'),
-      show1: false,
-      show2: true,
-      regCheck: false,
-      username: '',
       email: '',
       password: '',
-      loginRules: [
-        (value: string) => {
-          if (value?.length > 0) return true;
-          return 'Поле не должно быть пустым';
-        },
-      ],
+      validInput: false,
     };
   },
   methods: {
@@ -76,11 +65,17 @@ export default {
         password: this.password,
       }).then((res) => {
         console.log(res);
-        // localStorage.setItem('jwt', res.data.jwt);
-        // localStorage.setItem('username', res.data.name);
-        // localStorage.setItem('id', res.data.id);
-        // window.dispatchEvent(new CustomEvent('login'));
       });
+    },
+    isValidEmail() {
+      const emailPattern =
+        /^(?=[a-zA-Z0-9@._%+-]{6,254}$)[a-zA-Z0-9._%+-]{1,64}@(?:[a-zA-Z0-9-]{1,63}\.){1,8}[a-zA-Z]{2,63}$/;
+      return emailPattern.test(this.email) || 'Неправильный email';
+    },
+    isValidPassword() {
+      const passwordPattern =
+        /^(?=.*[A-Z])(?=.*[!@#$&*])(?=.*[0-9])(?=.*[a-z].*[a-z].*[a-z]).{8}$/;
+      return passwordPattern.test(this.password) || 'Слабый пароль';
     },
   },
 };
