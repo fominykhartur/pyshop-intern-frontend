@@ -45,7 +45,7 @@ axios.interceptors.response.use(
         return axiosInstance(config);
       })
       .catch((err) => {
-        useRouter().push('/login');
+        useRouter().push('#/login');
         return Promise.reject(err);
       });
   }
