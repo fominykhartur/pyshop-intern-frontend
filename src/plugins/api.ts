@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { Cookies } from 'quasar';
+import { useRouter } from 'vue-router';
 const baseURL = import.meta.env.VITE_HOST;
 
 const axiosInstance = axios.create({
@@ -44,7 +45,7 @@ axios.interceptors.response.use(
         return axiosInstance(config);
       })
       .catch((err) => {
-        window.location.href = '#/login';
+        useRouter().push('/login');
         return Promise.reject(err);
       });
   }
