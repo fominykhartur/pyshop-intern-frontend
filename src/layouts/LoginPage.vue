@@ -67,7 +67,7 @@ export default {
   },
   methods: {
     onSubmit: function () {
-      postRequest('http://localhost:3000/auth/signin', {
+      postRequest(`${import.meta.env.VITE_HOST}/auth/signin`, {
         email: this.email,
         password: this.password,
       }).then((res) => {
