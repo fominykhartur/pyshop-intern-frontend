@@ -64,6 +64,7 @@ export default {
         email: this.email,
         password: this.password,
       }).then((res) => {
+        this.$router.replace('/login');
         console.log(res);
       });
     },
